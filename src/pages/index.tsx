@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import OwnImage from '@/components/atoms/OwnImage'
 import TechyGradientText from '@/components/atoms/Typography/TechyGradientText'
 import AboutLayout from '@/components/organisms/pages/about/AboutLayout'
 import ConnectWalletButton from '@/components/organisms/pages/about/ConnectWalletButton'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import SolaceLogoSmall from '@/resources/svg/solace-logo-white-small.svg'
 import Userpic from '@/resources/svgx/Userpic'
@@ -213,7 +215,7 @@ export function Airdrop() {
   const handleDisconnect = async () => {
     deactivate()
     if (connector instanceof WalletConnectConnector || connector instanceof WalletLinkConnector) {
-      connector?.close()
+      connector?.close().catch(console.error)
     }
   }
 
@@ -268,8 +270,9 @@ export function Airdrop() {
         await addPolygon()
       }
     }
-    check()
-  }, [active])
+    check().catch(console.error)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, chainId])
 
   useEffect(() => {
     if (errors.length > 0) {
@@ -286,12 +289,14 @@ export function Airdrop() {
   useEffect(() => {
     if (account && chainId == 137) {
       async function getUserPoints() {
-        const res = await fetch(`http://35.88.36.175:18123/points?address=${account as string}`)
+        const res = await fetch(`http://localhost:3000/api/points?address=${account as string}`)
+        console.log({ res })
         return parseInt(await res.text())
       }
 
       async function getCommunityPoints() {
-        const res = await fetch(`http://35.88.36.175:18123/allpoints`)
+        const res = await fetch(`http://localhost:3000/api/allpoints`)
+        console.log({ res })
         return parseInt(await res.text())
       }
       async function updatePoints() {
@@ -308,7 +313,7 @@ export function Airdrop() {
     <AboutLayout title={mainTitle} subtitle={subtitle}>
       {/* top-left logo */}
       <div className="absolute left-7.5 top-7.5">
-        <Link href="/" passHref={undefined}>
+        <a href="https://solace.fi">
           <OwnImage
             className="block md:hidden ml-5 md:ml-7.5 select-none cursor-pointer"
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -316,9 +321,9 @@ export function Airdrop() {
             alt="Small Solace Logo."
             width="132.57px"
           />
-        </Link>
+        </a>
         {/* desktop */}
-        <Link href="/" passHref={undefined}>
+        <a href="https://solace.fi">
           <OwnImage
             className="hidden md:block select-none cursor-pointer"
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -326,17 +331,18 @@ export function Airdrop() {
             alt="Small Solace Logo."
             width="132.57px"
           />
-        </Link>
+        </a>
       </div>
       <div
         className="fixed top-7.5 right-7.5 h-9 rounded-full flex items-center justify-center text-dark font-title font-bold text-lg select-none cursor-pointer"
         // onClick={toggleSidebar}
         onClick={() => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           !account
             ? handleConnect().catch((e) => {
                 console.error('ERROR CONNECTING TO CHAIN: ', e)
               })
-            : handleDisconnect()
+            : handleDisconnect().catch((e) => console.error('ERROR CONNECTING TO CHAIN: ', e))
         }}
       >
         <div className="h-[52px] rounded-full gap-2 bg-light flex items-center select-none cursor-pointer hover:brightness-110 duration-200 ease-out group">
@@ -385,6 +391,7 @@ export default function AirdropWebsite() {
   return (
     <Web3ReactProvider
       getLibrary={(provider: any): ethers.providers.Web3Provider => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return new ethers.providers.Web3Provider(provider, 'any')
       }}
     >
