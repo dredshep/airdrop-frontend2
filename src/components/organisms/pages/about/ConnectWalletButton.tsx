@@ -3,10 +3,12 @@ import classNames from 'classnames'
 
 export default function ConnectWalletButton({
   className,
-  pathname,
+  // pathname,
+  children,
 }: {
   className?: string
-  pathname: string
+  // pathname: string
+  children?: React.ReactNode
 }) {
   return (
     <a
@@ -17,9 +19,11 @@ export default function ConnectWalletButton({
         'cursor-pointer hover:brightness-110 hover:gap-5 duration-300 ease-out hover:scale-105 hover:shadow-std', // interaction
         className
       )}
-      href={`https://app.solace.fi/${pathname}?connect-wallet=true`}
+      href={`https://medium.com/solace-fi/solace-announces-phase-1-of-solace-airdrop-17b2afbc0259`}
+      target="_blank"
+      rel="noopener noreferrer"
     >
-      <p>Connect Wallet</p> <ArrowRightSm className="fill-light" />
+      <p>{children ?? 'Connect Wallet'}</p> <ArrowRightSm className="fill-light" />
     </a>
   )
 }
