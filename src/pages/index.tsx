@@ -194,6 +194,7 @@ export function Airdrop() {
     await activate(BrowserWalletConnector.connector, undefined, true)
       .then(() => setErrors([]))
       .catch((error) => {
+        console.error('handleConnect error: ', error)
         const walletErrors: string[] = []
         if (error instanceof NoEthereumProviderError) {
           walletErrors.push('No provider found.')
@@ -228,6 +229,7 @@ export function Airdrop() {
           params: [{ chainId: formattedChainId }],
         })
       } catch (error: any) {
+        console.error('addPolygon error: ', error)
         // 4902 is the error code for attempting to switch to an unrecognized chainId
         if (error.code === 4902) {
           await library.provider.request({
@@ -290,14 +292,16 @@ export function Airdrop() {
     if (account && chainId == 137) {
       async function getUserPoints() {
         const res = await fetch(`http://localhost:3000/api/points?address=${account as string}`)
-        console.log({ res })
-        return parseInt(await res.text())
+        const text = await res.text()
+        console.log(text)
+        return parseInt(text)
       }
 
       async function getCommunityPoints() {
         const res = await fetch(`http://localhost:3000/api/allpoints`)
-        console.log({ res })
-        return parseInt(await res.text())
+        const text = await res.text()
+        console.log(text)
+        return parseInt(text)
       }
       async function updatePoints() {
         setUserPoints(await getUserPoints())
