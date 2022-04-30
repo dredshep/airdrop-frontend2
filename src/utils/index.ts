@@ -106,3 +106,6 @@ export const rangeFrom0 = (stop: number): number[] => {
   }
   return arr
 }
+
+export const shortenAddress = (input: string): string =>
+  `${input.substring(0, 6)}...${input.substring(input.length - 4, input.length)}`
